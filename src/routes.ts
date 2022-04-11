@@ -1,28 +1,27 @@
 import { Request, Response, Router } from 'express';
-import { getCustomRepository } from 'typeorm';
-import { UserRepository } from './repository/UserRepository';
+import { CreateUserController } from './controllers/CreateUserController';
+import { DeleteUserByIdController } from './controllers/DeleteUserByIdController';
+import { GetUserByIdController } from './controllers/GetUserByIdController';
+import { GetUserController } from './controllers/GetUserContoller';
+import { PutUserByIdController } from './controllers/PutUserByIdController';
 
 const router = Router();
 
 router.get('/', (req: Request, res: Response) => {
-    res.status(200).json({ message: 'Hellow world' });
+  res.status(200).json({ message: 'Hellow world' });
 });
 
-router.post('/users', async (req: Request, res: Response) => {
-    console.log('caiu aqui')
-    const { name, email, password, is_admin } = req.body
-    console.log(name, email, password, is_admin)
+const createUserController = new CreateUserController();
+const getUserController = new GetUserController();
+const getUserById = new GetUserByIdController();
+const deleteUserByIdController = new DeleteUserByIdController();
+const putUserByIdController = new PutUserByIdController();
 
-    try {
-        const conectUser = getCustomRepository(UserRepository)
-        const user = conectUser.create({ name, email, password, is_admin })
-        console.log(user)
-        await conectUser.save(user)
+router.post('/users', createUserController.handle);
+router.get('/users', getUserController.handle);
+router.get('/users/:id', getUserById.handle);
+router.delete('/users/:id', deleteUserByIdController.handle);
+router.put('/users/:id', putUserByIdController.handle);
 
-        res.status(201).json(user)
-    } catch (error) {
-        res.status(500).json({ message: 'Erro ao cadastrar o usuario' })
-    }
-});
 
 export { router };
