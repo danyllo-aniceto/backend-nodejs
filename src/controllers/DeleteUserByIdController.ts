@@ -1,14 +1,13 @@
 import { Request, Response } from "express";
-import { getCustomRepository } from "typeorm";
-import { UserRepository } from "../repository/UserRepository";
+import { DeleteUserByIdService } from "../services/DeleteUserByIdService";
 
 class DeleteUserByIdController {
   async handle(req: Request, res: Response) {
     const { id } = req.params
 
     try {
-      const conectUser = getCustomRepository(UserRepository)
-      await conectUser.delete({ id: Number(id) });
+      const deleteUserByIdService = new DeleteUserByIdService()
+      await deleteUserByIdService.handle(id);
 
       res.status(200).json({ message: 'Usuario deletado com sucesso' })
     } catch (error) {

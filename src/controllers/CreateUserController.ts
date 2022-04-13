@@ -1,18 +1,14 @@
 import { Request, Response } from "express";
-import { getCustomRepository } from "typeorm";
-import { UserRepository } from "../repository/UserRepository";
+import { IUserDTO } from "../dtos/IUserDTO";
+import { CreateUserService } from "../services/CreateUserService";
 
 class CreateUserController {
     async handle(req: Request, res: Response) {
-      const { name, email, password, is_admin } = req.body
-      console.log(name, email, password, is_admin)
+      const data: IUserDTO = req.body;
 
       try {
-        const conectUser = getCustomRepository(UserRepository)
-        const user = conectUser.create({ name, email, password, is_admin })
-        console.log(user)
-        await conectUser.save(user)
-
+        const createUserService = new CreateUserService()
+        const user = await createUserService.handle(data);
         res.status(201).json(user)
       } catch (error) {
         res.status(500).json({ message: 'Erro ao cadastrar o usuario' })
@@ -20,4 +16,4 @@ class CreateUserController {
     }
 }
 
-export { CreateUserController }
+export { CreateUserController };
